@@ -1,26 +1,27 @@
 
 function flash_git_branch_name
-  command git for-each-ref --format='%(objectname) %(refname:short)' refs/heads | awk "/^$(git rev-parse HEAD)/ {print \$2}"
+    # Get the current branch
+    command git rev-parse --abbrev-ref HEAD
 end
 
 function fish_right_prompt
   set -l code $status
 
   function status::color -S
-    test $code -ne 0; and echo (flash_snd); or echo (flash_fst)
+    test $code -ne 0; and echo (pink); or echo (blue) (reset_color)
   end
 
   if test $CMD_DURATION -gt 0
-    printf (flash_dim)" "(printf "%.3fs " (math "$CMD_DURATION / 1000"))(flash_off)
+    printf (gray)" "(printf "%.3fs " (math "$CMD_DURATION / 1000"))(reset_color)
   end
 
   if test -d .git
-    echo (flash_snd)"("(flash_fst)(flash_git_branch_name)(flash_snd)")"(flash_off)
+    echo (purple)"("(hard_blue)(flash_git_branch_name)(purple)")"(reset_color)
   end
 
-  printf " "(flash_trd)(date +%H(status::color):(flash_dim)%M(status::color):(flash_trd)%S)(flash_snd)" "(flash_off)
+  printf " "(gray)(date +%H(status::color):(gray)%M(status::color):(gray)%S)(orange)" "(reset_color)
 
   if test $code -ne 0
-    echo (flash_fst)"≡ "(flash_snd)"$code"(flash_off)
+    echo (blue)"≡ "(pink)"$code"(reset_color)
   end
 end
